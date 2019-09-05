@@ -1,0 +1,48 @@
+Local Database Servers      本地数据库服务器
+
+右键：
+New Server Group        增加新的服务组
+Explore     探索
+Register Server     Insert      注册服务
+Register SSH Server             注册SSH服务
+Query Analyzer      Ctrl+Q      查询分析器
+Query Analyzer Window       Ctrl+Shift+W        以窗口形式打开查询分析器
+Query Builder       Ctrl+Alt+Q      查询生成器
+FluidShell
+Mount Directory     挂载的目录
+Unmount Directory   未挂载的目录
+Refresh     F5      更新
+
+
+My Schema   我的模式
+Schema      模式
+Storage     存储
+Management      管理
+Security        安全
+
+
+My Schema   我的模式
+    Tables  表 
+    Views   视图
+    Synonyms    同义词，别名
+    Sequences   序列
+    Constraints     约束
+    Indexes     索引
+    Triggers    触发器
+    Packages    包
+    Package Bodies      包体
+    Procedures      存储过程
+    Functions       函数
+    Java Sources    Java源
+    Java Classes    Java类
+    Java Resources      Java资源
+    Materialized Views      实例化视图
+    Materialized View Logs      实例化视图日志
+    Object Types    对象类型
+    Array Types     数组类型
+    Table Types     表类型
+    Clusters        群集
+    Queue Tables    对列表
+    Dimensions      规模，大小
+    Refresh Groups      参照群体
+    Database Links      数据库链接
