@@ -13,3 +13,5 @@ mysql在windows上有两种安装方式：安装引导程序安装和压缩包�
 ## 时间
 
 [MySQL日期，字符串，时间戳互转](https://www.cnblogs.com/jhy-ocean/p/5560857.html)
+
+[MySQL修改时区的方法小结](https://www.jb51.net/article/84198.htm)
