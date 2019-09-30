@@ -140,6 +140,20 @@ hexo d -g #生成并上传
 
 在站点目录下修改配置文件```_config.yml```，冒号后面少了空格
 
+3、如何在文章中插入图片
+
+```log
+# 开启资源文件夹
+![](01.png)
+
+{% asset_img 01.png 图片1 %}
+
+# 使用标签插件，引用资源，图片放在source/img文件夹
+![](/img/01.png)
+
+{% img /img/01.png 100 100 "图片1" %}
+```
+
 ## 拓展
 
 [使用hexo+github搭建免费个人博客详细教程](http://blog.haoji.me/build-blog-website-by-hexo-github.html?from=xa)
