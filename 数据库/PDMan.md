@@ -24,8 +24,5 @@
 同一行可以使用Tab键，切换到下一列，回车可以打开选项。
 表完善以后，再进行关系图的连接。
 
-数据库连接语句：
-jdbc:mysql://39.104.227.201:3306/institution?characterEncoding=UTF-8&useSSL=false&useUnicode=true
-
 数据库：
 jdbc:mysql://127.0.0.1:3306/jdc?characterEncoding=UTF-8&useSSL=false&useUnicode=true&serverTimezone=UTC
