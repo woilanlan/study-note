@@ -36,3 +36,11 @@ spring.datasource.type=com.alibaba.druid.pool.DruidDataSource
 spring.datasource.username=root
 spring.datasource.password=xuelong
 spring.datasource.url=jdbc:mysql://127.0.0.1:3306/test?characterEncoding=UTF-8&useSSL=false&useUnicode=true&serverTimezone=UTC
+
+## 关闭开机启动
+
+1.打开服务列表
+
+有两种方法，一是快捷键 win+R 输入services.msc，二是右击我的电脑->管理->点击左侧服务和应用程序->服务
+
+2.在服务列表里找到MySQL，在右键属性里面将启动类型自动改为手动
