@@ -26,9 +26,9 @@
 
 #### 3.常见的垃圾回收算法
 
-1. 标记清除 - 位置不连续 产生碎片（两遍扫描）
+1. 标记清除 - 位置不连续 产生碎片 效率偏低（两遍扫描）
 2. 拷贝算法 - 没有碎片，浪费空间
-3. 标记压缩 - 没有碎片，效率偏低（两遍扫描）
+3. 标记压缩 - 没有碎片，效率偏低（两遍扫描，指针需要调整）
 
 #### 4.JVM内存分代模型（用于分代垃圾回收算法）
 
@@ -71,7 +71,7 @@
 
 * JVM的命令行参数参考：<https://docs.oracle.com/javase/8/docs/technotes/tools/unix/java.html>
 
-* JVM参数分类
+* HotSpot参数分类
 
   > 标准： - 开头，所有的HotSpot都支持
   >
@@ -79,16 +79,87 @@
   >
   > 不稳定：-XX 开头，下个版本可能取消
 
-  -XX:+PrintCommandLineFlags 
+  java -version
 
-  -XX:+PrintFlagsFinal 最终参数值
+  java -X
+  
+  试验用程序：
+  
+  ```java
+  import java.util.List;
+  import java.util.LinkedList;
+  
+  public class HelloGC {
+    public static void main(String[] args) {
+      System.out.println("HelloGC!");
+      List list = new LinkedList();
+      for(;;) {
+        byte[] b = new byte[1024*1024];
+        list.add(b);
+      }
+    }
+  }
+  ```
 
-  -XX:+PrintFlagsInitial 默认参数值
+  1. java -XX:+PrintCommandLineFlags HelloGC
+  2. java -Xmn10M -Xms40M -Xmx60M -XX:+PrintCommandLineFlags HelloGC
+  3. java -XX:+UseConcMarkSweepGC -XX:+PrintCommandLineFlags HelloGC
+  4. java -XX:+PrintFlagsInitial 默认参数值
+  5. java -XX:+PrintFlagsFinal 最终参数值
+  6. java -XX:+PrintFlagsFinal | grep xxx 找到对应的参数
+  7. java -XX:+PrintFlagsFinal -version |grep GC
+
+* 常见垃圾回收器组合参数设定：(1.8)
+  * -XX:+UseSerialGC = Serial New (DefNew) + Serial Old
+    * 小型程序。默认情况下不会是这种选项，HotSpot会根据计算及配置和JDK版本自动选择收集器
+  * -XX:+UseParNewGC = ParNew + SerialOld
+    * 这个组合已经很少用（在某些版本中已经废弃）
+    * <https://stackoverflow.com/questions/34962257/why-remove-support-for-parnewserialold-anddefnewcms-in-the-future>
+  * UseConc(urrent)MarkSweepGC = ParNew + CMS + Serial Old
+  * UseParallelGC = Parallel Scavenge + Parallel Old (1.8默认) 【PS + SerialOld】
+  * UseParallelOldGC = Parallel Scavenge + Parallel Old
+  * UseG1GC = G1
+* Linux中没找到默认GC的查看方法，而windows中会打印UseParallelGC
+  * java +XX:+PrintCommandLineFlags -version
+  * 通过GC的日志来分辨
+
+#### 7.调优，从规划开始
+
+* 调优，从业务场景开始，没有业务场景的调优都是耍流氓
+* 无监控，不调优
+* 步骤：
+  1. 熟悉业务场景（没有最好的垃圾回收器，只有最合适的垃圾回收器）
+     1. 响应时间、停顿时间
+     2. 吞吐量 = 用户时间 / 用户时间 + GC时间
+  2. 选择回收器组合
+  3. 计算内存需求
+  4. 设定年代大小、升级年龄
+  5. 设定日志参数
+     1. -Xloggc:/opt/xxx/logs/xxx-xxx-gc-%t.log -XX:+UseGCLogFileRotation -XX:NumberOfGCLogFiles=5 -XX:GCLogFileSize=20M -XX:+PrintGCDetails -XX:+PrintGCDateStamps -XX:+PrintGCCause
+  6. 观察日志情况
+
+#### 作业
+
+1. -XX:MaxTenuringThreshold控制的是什么？A: 对象升入老年代的年龄
+2. 生产环境中，倾向于将最大堆内存和最小堆内存设置为：（为什么？）A: 相同
+3. JDK1.8默认的垃圾回收器是：C: PS + ParallelOld
+4. 什么是响应时间优先？
+5. 什么是吞吐量优先？
+6. ParNew和PS的区别是什么？
+7. ParNew和ParallelOld的区别是什么？（年代不同，算法不同）
+8. 长时间计算的场景应该选择：A：停顿时间 B: 吞吐量
+9. 大规模电商网站应该选择：A：停顿时间 B: 吞吐量
+10. HotSpot的垃圾收集器最常用有哪些？
+11. 常见的HotSpot垃圾收集器组合有哪些？
+12. JDK1.7 1.8 1.9的默认垃圾回收器是什么？如何查看？
+13. 所谓调优，到底是在调什么？
+14. 如果采用PS + ParrallelOld组合，怎么做才能让系统基本不产生FGC
+15. 如果采用ParNew + CMS组合，怎样做才能够让系统基本不产生FGC
+16. G1是否分代？G1垃圾回收器会产生FGC吗？
 
 #### 参考资料
 
-[Our Collectors](https://blogs.oracle.com/jonthecollector/our-collectors)
-
-<https://docs.oracle.com/javase/8/docs/technotes/tools/unix/java.html>
-
-<http://java.sun.com/javase/technologies/hotspot/vmoptions.jsp>
+1. [Our Collectors](https://blogs.oracle.com/jonthecollector/our-collectors)
+2. <https://docs.oracle.com/javase/8/docs/technotes/tools/unix/java.html>
+3. <http://java.sun.com/javase/technologies/hotspot/vmoptions.jsp>
+4. JVM调优参考文档：<https://docs.oracle.com/en/java/javase/13/gctuning/introduction-garbage-collection-tuning.html#GUID-8A443184-7E07-4B71-9777-4F12947C8184>
