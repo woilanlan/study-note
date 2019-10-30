@@ -19,7 +19,7 @@ GitHub的CDN域名遭到DNS污染，导致无法连接使用 GitHub 的加速分
 文件路径：C:\Windows\System32\drivers\etc\host
 
 ```log
-140.82.113.4    github.com
+192.30.253.112    github.com
 199.232.5.194   github.global.ssl.fastly.net
 99.84.240.40    d3c33hcgiwev3.cloudfront.net
 ```

@@ -34,3 +34,7 @@ Git学习
 - 出现xxx invited you to collaborate(xxx 邀请您合作)，然后点击下方Accept invitation（同意邀请），同意之后，就可以一起合作开发项目了。当然也可以选择Decline拒绝邀请。
 
 备注：如果被邀请的人通知信息是关闭的，是收不到邀请通知提醒的，可以让对方开启通知，或者直接把上面介绍的邀请链接发给对方，通过邀请链接来加入。
+
+github离开合作的项目：
+
+选择自己头像 >> 点击setting >> 点击repositories,查看与别人合作的项目 >> 点击leave
