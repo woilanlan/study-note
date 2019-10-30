@@ -38,7 +38,7 @@
    2. 永久代必须指定大小限制 ，元数据可以设置，也可以不设置，无上限（受限于物理内存）
    3. 字符串常量 1.7 - 永久代，1.8 - 堆
    4. MethodArea逻辑概念 - 永久代、元数据
-3. 新生代 = Eden + 2个suvivor区 
+3. 新生代 = Eden + 2个suvivor区
    1. YGC回收之后，大多数的对象会被回收，活着的进入s0
    2. 再次YGC，活着的对象eden + s0 -> s1
    3. 再次YGC，eden + s1 -> s0
@@ -57,7 +57,7 @@
 1. Serial 年轻代 串行回收
 2. PS 年轻代 并行回收
 3. ParNew 年轻代 配合CMS的并行回收
-4. SerialOld 
+4. SerialOld
 5. ParallelOld
 6. ConcurrentMarkSweep 老年代 并发的， 垃圾回收和应用程序同时运行，降低STW的时间(200ms)
 7. G1(10ms)
@@ -138,6 +138,122 @@
      1. -Xloggc:/opt/xxx/logs/xxx-xxx-gc-%t.log -XX:+UseGCLogFileRotation -XX:NumberOfGCLogFiles=5 -XX:GCLogFileSize=20M -XX:+PrintGCDetails -XX:+PrintGCDateStamps -XX:+PrintGCCause
   6. 观察日志情况
 
+#### 8.GC日志详解
+
+heap dump部分：
+
+```java
+eden space 5632K, 94% used [0x00000000ff980000,0x00000000ffeb3e28,0x00000000fff00000)
+后面的内存地址指的是，起始地址，使用空间结束地址，整体空间结束地址
+```
+
+#### 9.实战操作
+
+1、测试代码：
+
+```java
+package com.mashibing.jvm.gc;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+
+/**
+* 从数据库中读取信用数据，套用模型，并把结果进行记录和传输
+*/
+
+public class T15_FullGC_Problem01 {
+
+    private static class CardInfo {
+        BigDecimal price = new BigDecimal(0.0);
+        String name = "张三";
+        int age = 5;
+        Date birthdate = new Date();
+
+        public void m() {}
+    }
+
+    private static ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(50,
+            new ThreadPoolExecutor.DiscardOldestPolicy());
+
+    public static void main(String[] args) throws Exception {
+        executor.setMaximumPoolSize(50);
+
+        for (;;){
+            modelFit();
+            Thread.sleep(100);
+        }
+    }
+
+    private static void modelFit(){
+        List<CardInfo> taskList = getAllCardInfo();
+        taskList.forEach(info -> {
+            // do something
+            executor.scheduleWithFixedDelay(() -> {
+                //do sth with info
+                info.m();
+
+            }, 2, 3, TimeUnit.SECONDS);
+        });
+    }
+
+    private static List<CardInfo> getAllCardInfo(){
+        List<CardInfo> taskList = new ArrayList<>();
+
+        for (int i = 0; i < 100; i++) {
+            CardInfo ci = new CardInfo();
+            taskList.add(ci);
+        }
+
+        return taskList;
+    }
+}
+```
+
+2、java -Xms200M -Xmx200M com.mashibing.jvm.gc.T15_FullGC_Problem01
+
+3、top命令观察到问题：内存不断增长 CPU占用率居高不下
+
+4、jps定位具体java进程
+
+5、jstat -gc 动态观察gc情况 / 阅读GC日志发现频繁GC / arthas观察 / jconsole
+
+6、jmap -dump:format=b,file=xxx pid / jmap -histo
+
+7、java -Xms20M -Xmx20M -XX:+UseParallelGC -XX:+HeapDumpOnOutOfMemoryError com.mashibing.jvm.gc.T15_FullGC_Problem01
+
+8、使用MAT / jhat进行dump文件分析
+
+9、找到代码的问题
+
+#### 实战：jconsole远程连接
+
+1. 程序启动加入参数：
+
+   > ```shell
+   > java -Djava.rmi.server.hostname=192.168.17.11 -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=11111 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false XXX
+   > ```
+
+2. 如果遭遇 Local host name unknown：XXX的错误，修改/etc/hosts文件，把XXX加入进去
+
+   > ```java
+   > 192.168.17.11 basic localhost localhost.localdomain localhost4 localhost4.localdomain4
+   > ::1         localhost localhost.localdomain localhost6 localhost6.localdomain6
+   > ```
+
+3. 关闭linux防火墙（实战中应该打开对应端口）
+
+   > ```shell
+   > service iptables stop
+   > chkconfig iptables off #永久关闭
+   > ```
+
+4. windows上打开 jconsole远程连接 192.168.17.11:11111
+
 #### 作业
 
 1. -XX:MaxTenuringThreshold控制的是什么？A: 对象升入老年代的年龄
@@ -155,7 +271,15 @@
 13. 所谓调优，到底是在调什么？
 14. 如果采用PS + ParrallelOld组合，怎么做才能让系统基本不产生FGC
 15. 如果采用ParNew + CMS组合，怎样做才能够让系统基本不产生FGC
+    1. 加大JVM内存
+    2. 加大Young的比例
+    3. 提高Y-O的年龄
+    4. 提高S区比例
+    5. 避免代码内存泄漏
 16. G1是否分代？G1垃圾回收器会产生FGC吗？
+17. 如果G1产生FGC，你应该做什么？
+    1. 扩内存
+    2. 提高CPU性能（回收的快，业务逻辑产生对象的速度固定，垃圾回收越快，内存空间越大）
 
 #### 参考资料
 
