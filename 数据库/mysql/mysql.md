@@ -44,3 +44,11 @@ spring.datasource.url=jdbc:mysql://127.0.0.1:3306/test?characterEncoding=UTF-8&u
 有两种方法，一是快捷键 win+R 输入services.msc，二是右击我的电脑->管理->点击左侧服务和应用程序->服务
 
 2.在服务列表里找到MySQL，在右键属性里面将启动类型自动改为手动
+
+## mysql插入数据后返回自增ID的方法
+
+```sql
+SELECT LAST_INSERT_ID();
+```
+
+参考：<https://blog.csdn.net/zhuchunyan_aijia/article/details/93620357>
