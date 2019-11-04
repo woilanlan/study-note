@@ -37,6 +37,13 @@ spring.datasource.username=root
 spring.datasource.password=xuelong
 spring.datasource.url=jdbc:mysql://127.0.0.1:3306/test?characterEncoding=UTF-8&useSSL=false&useUnicode=true&serverTimezone=UTC
 
+```log
+//北京时间东八区
+serverTimezone=GMT%2B8 
+//或者使用上海时间
+serverTimezone=Asia/Shanghai
+```
+
 ## 关闭开机启动
 
 1.打开服务列表
