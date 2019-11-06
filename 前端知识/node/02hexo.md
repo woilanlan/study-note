@@ -128,6 +128,43 @@ hexo s -g #生成并本地预览
 hexo d -g #生成并上传
 ```
 
+## 升级
+
+1、全局的 hexo-cli 更新：卸载重装
+
+2、更新项目的 package.json
+
+全局安装 npm-check
+
+```sh
+> npm install -g npm-check //全局安装。项目下安装可自行选择
+> npm install npm-check    //项目下安装，项目根目录执行
+```
+
+进入项目所在目录,查看包更新信息
+
+```sh
+npm-check
+```
+
+更新包，分类别展示，使用空格选择包，然后enter开始更新。自动更新package.json内的相关包信息
+
+```sh
+> npm-check -u
+```
+
+npm-check指令列表
+
+```sh
+-u, --update       显示一个交互式UI，用于选择要更新的模块，并自动更新"package.json"内包版本号信息
+-g, --global       检查全局下的包
+-s, --skip-unused  忽略对未使用包的更新检查
+-p, --production   忽略对"devDependencies"下的包的检查
+-d, --dev-only     忽略对"dependencies"下的包的检查
+-i, --ignore       忽略对指定包的检查.
+-E, --save-exact   将确切的包版本存至"package.json"(注意，此命令将存储'x.y.z'而不是'^x.y.z')
+```
+
 ## 问题
 
 1、hexo不是内部或外部命令，也不是可运行的程序
