@@ -6,6 +6,8 @@
 
 [Lombok 看这篇就够了](https://zhuanlan.zhihu.com/p/32779910)
 
+[lombok踩坑与思考](https://www.cnblogs.com/wuyuegb2312/p/9750462.html)
+
 ## 一、Lombok 简介
 
 Lombok 是一款 Java 开发插件，使得 Java 开发者可以通过其定义的一些注解来消除业务工程中冗长和繁琐的代码，尤其对于简单的 Java 模型对象（POJO）。在开发环境中使用 Lombok 插件后，Java 开发人员可以节省出重复构建，诸如 hashCode 和 equals 这样的方法以及各种业务对象模型的 accessor 和 toString 等方法的大量时间。对于这些方法，Lombok 能够在编译源代码期间自动帮我们生成这些方法，但并不会像反射那样降低程序的性能。
