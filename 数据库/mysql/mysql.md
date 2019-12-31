@@ -14,16 +14,16 @@ mysql在windows上有两种安装方式：安装引导程序安装和压缩包�
 
 ```sh
 # 连接数据库
-sudo mysql -h 127.0.0.1 -u yh_admuser -p
+sudo mysql -h 127.0.0.1 -u root -p
 
 # 查看当前有多少库
 show databases;
 
 # 查看数据库的创建细节
-show create database ZHY1YHOATDB1;
+show create database test;
 
 # 选择一个数据库
-use ZHY1YHOATDB1;
+use test;
 
 # 查看当前使用的是哪个库
 select database();
@@ -32,10 +32,10 @@ select database();
 show tables;
 
 # 查看表结构
-desc BO_EU_SEAL;
+desc user;
 
 # 数据库备份
-mysqldump -h 127.0.0.1 -u yh_admuser -p test > test.sql;
+mysqldump -h 127.0.0.1 -u root -p test > test.sql;
 ```
 
 ## 创建数据库和表
@@ -54,6 +54,20 @@ DEFAULT CHARACTER SET = utf8mb4;
 INSERT INTO `test`.`user` (`username`, `address`) VALUES ('longlong', 'woilanlan.github.io');
 ```
 
+## 删除
+
+删除表中所有记录 (逐条删除)
+
+```sql
+delete from USER;  
+```
+
+使用truncate删除表中记录(摧毁表格，然后重建表结构)
+
+```sql
+truncate table USER;
+```
+
 ## 时间
 
 [MySQL日期，字符串，时间戳互转](https://www.cnblogs.com/jhy-ocean/p/5560857.html)
@@ -62,12 +76,12 @@ INSERT INTO `test`.`user` (`username`, `address`) VALUES ('longlong', 'woilanlan
 
 spring.datasource.type=com.alibaba.druid.pool.DruidDataSource
 spring.datasource.username=root
-spring.datasource.password=xuelong
+spring.datasource.password=Longlong
 spring.datasource.url=jdbc:mysql://127.0.0.1:3306/test?characterEncoding=UTF-8&useSSL=false&useUnicode=true&serverTimezone=UTC
 
 ```log
 //北京时间东八区
-serverTimezone=GMT%2B8 
+serverTimezone=GMT%2B8
 //或者使用上海时间
 serverTimezone=Asia/Shanghai
 ```
