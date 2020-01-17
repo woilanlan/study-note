@@ -1,5 +1,7 @@
 # PDMan使用说明
 
+官网：<https://gitee.com/robergroup/pdman>
+
 界面说明：
 
 ```log
